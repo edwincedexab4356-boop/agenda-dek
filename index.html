@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Agenda D.E.K</title>
+<meta name="description" content="Pendientes de los proyectos que dejan dinero.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f7a5c'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11' stroke='white' stroke-width='3.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#f3f5f4; --surface:#ffffff; --fg:#14201c; --muted:#5d6b66; --line:#dbe2df;
+  --accent:#0f7a5c;
+  --you:#b4471f; --you-soft:#fbe9e1; --client:#6a4bb3; --client-soft:#eee8fa; --me:#1f6fb4; --me-soft:#e3eef9;
+  --danger:#b3261e;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1513; --surface:#17201d; --fg:#e6eeeb; --muted:#93a39d; --line:#2a3632;
+  --accent:#4cc79c;
+  --you:#f0926b; --you-soft:#3b2219; --client:#b8a2f0; --client-soft:#2a2340; --me:#79b4ec; --me-soft:#1b2c3e;
+  --danger:#f08a82; color-scheme:dark}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:860px;margin:0 auto;padding-block:max(28px,env(safe-area-inset-top,0px)) 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:22px}
+header{display:grid;gap:6px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);line-height:1.05;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--muted);margin:0}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;gap:8px;align-items:baseline}
+.stat b{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+.stat span{color:var(--muted);font-size:13px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 12px;font:500 13px var(--body);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.chip:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.spacer{flex:1}
+.proj{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.ph{display:flex;gap:10px;align-items:flex-start;padding:14px 16px 10px;border-bottom:1px solid var(--line)}
+.ph h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;line-height:1.2}
+.ph p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.ph .count{margin-left:auto;font-size:12px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;padding-top:3px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--accent);margin-top:6px;flex:none}
+ul{list-style:none;margin:0;padding:0}
+li.t{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;padding:10px 16px;border-bottom:1px solid var(--line)}
+li.t:last-child{border-bottom:0}
+li.t input[type=checkbox]{width:19px;height:19px;margin:2px 0 0;accent-color:var(--accent);cursor:pointer}
+.txt{min-width:0;overflow-wrap:anywhere}
+li.done .txt{color:var(--muted);text-decoration:line-through}
+.meta{display:flex;gap:6px;align-items:center;margin-top:3px;flex-wrap:wrap}
+.who{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;border-radius:6px;padding:1px 7px}
+.who.tu{background:var(--you-soft);color:var(--you)}
+.who.cliente{background:var(--client-soft);color:var(--client)}
+.who.claude{background:var(--me-soft);color:var(--me)}
+.date{font-size:12px;color:var(--muted)}
+.del{background:none;border:0;color:var(--muted);cursor:pointer;font:500 12px var(--body);padding:4px 6px;border-radius:6px}
+.del:hover{color:var(--danger)}
+.del.sure{color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.empty{padding:12px 16px;color:var(--muted);font-size:14px}
+form.add{display:flex;gap:8px;padding:10px 16px 14px;border-top:1px solid var(--line);flex-wrap:wrap;background:color-mix(in srgb,var(--bg) 50%,var(--surface))}
+form.add input[type=text]{flex:1 1 220px;min-width:0;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:8px;padding:8px 10px;font-size:16px;font-family:inherit}
+form.add select{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:8px;padding:8px;font-size:16px;font-family:inherit}
+form.add button{border:0;background:var(--accent);color:var(--surface);border-radius:8px;padding:8px 14px;font:600 14px var(--body);cursor:pointer}
+.status{font-size:13px;color:var(--muted);min-height:1.2em}
+footer{display:flex;flex-wrap:wrap;gap:8px;align-items:center;color:var(--muted);font-size:13px}
+footer button{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:8px;padding:6px 12px;font:500 13px var(--body);cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Agenda D.E.K</h1>
+    <p class="sub">Solo los proyectos que dejan dinero. Marca lo que vayas terminando.</p>
+    <div class="stats">
+      <div class="stat"><b id="sPend">–</b><span>pendientes</span></div>
+      <div class="stat"><b id="sTu">–</b><span>te tocan a ti</span></div>
+      <div class="stat"><b id="sCli">–</b><span>esperan al cliente</span></div>
+      <div class="stat"><b id="sCl">–</b><span>le tocan a Claude</span></div>
+      <div class="stat"><b id="sDone">–</b><span>hechas</span></div>
+    </div>
+  </header>
+
+  <div class="bar" role="group" aria-label="Filtrar">
+    <button class="chip" data-f="todas" aria-pressed="true">Todas</button>
+    <button class="chip" data-f="tu" aria-pressed="false">Tú</button>
+    <button class="chip" data-f="cliente" aria-pressed="false">Cliente</button>
+    <button class="chip" data-f="claude" aria-pressed="false">Claude</button>
+    <span class="spacer"></span>
+    <button class="chip" id="showDone" aria-pressed="false">Ver hechas</button>
+  </div>
+  <div class="status" id="status"></div>
+
+  <div id="projects" style="display:grid;gap:16px"></div>
+
+  <footer>
+    <span>Las tareas se guardan en este navegador.</span>
+    <span class="spacer"></span>
+    <button type="button" id="exportar">Descargar copia</button>
+    <button type="button" id="importarBtn">Cargar copia</button>
+    <input type="file" id="importar" accept="application/json,.json" hidden>
+  </footer>
+</div>
+
+<script>
+const CLAVE="agenda-dek-v1";
+const PROYECTOS=[
+  {k:"pretty",n:"Pretty Store",d:"Tienda en línea · La Chorrera"},
+  {k:"alex",n:"Alex Store",d:"Tienda de ropa y calzado"},
+  {k:"gorras",n:"Gorras de Alex",d:"Tienda y caja de gorras"},
+  {k:"ballonsdei",n:"Balloonsdei",d:"Globos, flores y ofrendas · Colón"},
+  {k:"novacore",n:"NovaCore",d:"Sistema por suscripción · $20 al mes"},
+  {k:"prospectos",n:"Prospectos",d:"Conseguir clientes nuevos · meta: 4"},
+  {k:"fiverr",n:"Fiverr",d:"Perfil de vendedor"},
+  {k:"monstruo",n:"Evoluciona Tu Monstruo",d:"Juego de Roblox con compras"}
+];
+const INICIALES=[
+  ["pretty","Cambiar la contraseña débil del panel","tu"],
+  ["pretty","Pasar los nameservers del dominio de Namecheap a Cloudflare","cliente"],
+  ["pretty","Quitar el dominio de Vercel cuando ya esté en Cloudflare","claude"],
+  ["alex","Mandar las fotos de los 81 productos que muestran la foto de ejemplo","cliente"],
+  ["alex","Confirmar el precio de los taquillos blanco/rojo/dorado (puse $65 supuesto)","cliente"],
+  ["alex","Después del 15 nov: descargar al respaldo las 5 fotos reales de comprobantes del proyecto viejo","claude"],
+  ["alex","Revisar el consumo de Supabase (cada semana)","claude"],
+  ["alex","Dominio propio","cliente"],
+  ["gorras","Preguntar qué pantalla o mensaje sale cuando 'no deja ingresar productos'","tu"],
+  ["gorras","Mandar opiniones reales de clientes (están ocultas)","cliente"],
+  ["gorras","Dominio propio","cliente"],
+  ["ballonsdei","Guardar la dirección y el horario nuevos en Configuración del panel","tu"],
+  ["ballonsdei","Sacar la cuenta de Cubo Pago para activar el pago con tarjeta","cliente"],
+  ["ballonsdei","Mandar la foto del local","cliente"],
+  ["ballonsdei","Volver a subir las fotos de productos con la dueña un domingo","tu"],
+  ["ballonsdei","Igualar las colecciones del pie de página con las 8 categorías reales","claude"],
+  ["novacore","Poner https://dek-novacore-xi.vercel.app como Site URL en Supabase","tu"],
+  ["novacore","Entrar y comprobar que sale la pestaña Negocios","tu"],
+  ["novacore","Prueba completa con un negocio de prueba (alta, activar, proyecto, abono, gasto, mensualidad)","claude"],
+  ["novacore","Confirmar el precio de $20 al mes","tu"],
+  ["prospectos","Completar el perfil de WhatsApp Business","tu"],
+  ["prospectos","Mandar mensajes poco a poco (máximo 12 por día)","tu"],
+  ["prospectos","Visitas en persona con la ruta de visitas","tu"],
+  ["fiverr","Terminar el perfil: nombre (Edwin Cedeno, sin ñ), título, idiomas, About y habilidades","claude"],
+  ["fiverr","Crear el primer servicio (gig) con paquetes y portada","claude"],
+  ["monstruo","Probar una compra real dentro del juego","tu"],
+  ["monstruo","Abrirlo a menores de 16: verificar identidad, 2 pasos y 250 jugadores (o 1000 Robux)","tu"]
+].map(([proyecto,texto,quien],i)=>({id:"t"+(i+1),proyecto,texto,quien,hecho:false,creado:i+1}));
+
+const WHO={tu:"Tú",cliente:"Cliente",claude:"Claude"};
+const $=s=>document.querySelector(s);
+const status=t=>{$("#status").textContent=t||""};
+let filtro="todas",verHechas=false,sure=null,tasks=cargar();
+
+function cargar(){
+  try{const raw=localStorage.getItem(CLAVE);if(raw){const v=JSON.parse(raw);if(Array.isArray(v))return v}}catch(e){}
+  return INICIALES.map(t=>({...t}));
+}
+function guardar(){
+  try{localStorage.setItem(CLAVE,JSON.stringify(tasks));status("")}
+  catch(e){status("Este navegador no deja guardar. Usa 'Descargar copia' para no perder los cambios.")}
+}
+function fecha(ms){try{return new Date(ms).toLocaleDateString("es-PA",{day:"numeric",month:"short"})}catch(e){return""}}
+
+function render(){
+  const pend=tasks.filter(t=>!t.hecho);
+  $("#sPend").textContent=pend.length;
+  $("#sTu").textContent=pend.filter(t=>t.quien==="tu").length;
+  $("#sCli").textContent=pend.filter(t=>t.quien==="cliente").length;
+  $("#sCl").textContent=pend.filter(t=>t.quien==="claude").length;
+  $("#sDone").textContent=tasks.length-pend.length;
+  const cont=$("#projects");
+  const drafts={};cont.querySelectorAll("form.add input[type=text]").forEach(i=>drafts[i.id]=i.value);
+  cont.textContent="";
+  for(const p of PROYECTOS){
+    const all=tasks.filter(t=>t.proyecto===p.k);
+    const abiertas=all.filter(t=>!t.hecho).length;
+    const vis=all.filter(t=>(verHechas||!t.hecho)&&(filtro==="todas"||t.quien===filtro))
+      .sort((a,b)=>(a.hecho-b.hecho)||((a.creado||0)-(b.creado||0)));
+    if(filtro!=="todas"&&!vis.length)continue;
+    const sec=document.createElement("section");sec.className="proj";
+    sec.innerHTML='<div class="ph"><span class="dot"></span><div><h2></h2><p></p></div><span class="count"></span></div><ul></ul>';
+    sec.querySelector("h2").textContent=p.n;
+    sec.querySelector("p").textContent=p.d;
+    sec.querySelector(".count").textContent=abiertas?`${abiertas} pendiente${abiertas>1?"s":""}`:(all.length?"al día ✓":"sin tareas");
+    const ul=sec.querySelector("ul");
+    if(!vis.length){const e=document.createElement("li");e.className="empty";e.textContent=all.length?"Todo hecho aquí.":"No hay tareas todavía.";ul.append(e)}
+    for(const t of vis){
+      const li=document.createElement("li");li.className="t"+(t.hecho?" done":"");
+      const cb=document.createElement("input");cb.type="checkbox";cb.checked=!!t.hecho;
+      cb.setAttribute("aria-label",(t.hecho?"Desmarcar: ":"Marcar hecha: ")+t.texto);
+      cb.onchange=()=>{t.hecho=cb.checked;t.hechoEn=cb.checked?Date.now():null;guardar();render()};
+      const box=document.createElement("div");box.className="txt";
+      const tx=document.createElement("div");tx.textContent=t.texto;
+      const meta=document.createElement("div");meta.className="meta";
+      const w=document.createElement("span");w.className="who "+(WHO[t.quien]?t.quien:"tu");w.textContent=WHO[t.quien]||"Tú";
+      meta.append(w);
+      if(t.hecho&&t.hechoEn){const d=document.createElement("span");d.className="date";d.textContent="hecha el "+fecha(t.hechoEn);meta.append(d)}
+      box.append(tx,meta);
+      const del=document.createElement("button");del.type="button";del.className="del"+(sure===t.id?" sure":"");
+      del.textContent=sure===t.id?"¿Borrar?":"Borrar";
+      del.onclick=()=>{
+        if(sure===t.id){sure=null;tasks=tasks.filter(x=>x.id!==t.id);guardar();render()}
+        else{sure=t.id;render();setTimeout(()=>{if(sure===t.id){sure=null;render()}},3500)}
+      };
+      li.append(cb,box,del);ul.append(li);
+    }
+    const f=document.createElement("form");f.className="add";
+    const inp=document.createElement("input");inp.type="text";inp.id="in-"+p.k;inp.placeholder="Nueva tarea…";inp.setAttribute("aria-label","Nueva tarea para "+p.n);inp.value=drafts[inp.id]||"";
+    const sel=document.createElement("select");sel.id="sel-"+p.k;sel.setAttribute("aria-label","Quién la hace");
+    for(const [v,l] of Object.entries(WHO)){const o=document.createElement("option");o.value=v;o.textContent=l;sel.append(o)}
+    const b=document.createElement("button");b.type="submit";b.textContent="Agregar";
+    f.append(inp,sel,b);
+    f.onsubmit=e=>{e.preventDefault();const v=inp.value.trim();if(!v)return;
+      tasks.push({id:"t"+Date.now().toString(36),proyecto:p.k,texto:v,quien:sel.value,hecho:false,creado:Date.now()});
+      inp.value="";guardar();render();const n=document.getElementById("in-"+p.k);if(n)n.focus()};
+    sec.append(f);
+    cont.append(sec);
+  }
+}
+
+document.querySelectorAll(".chip[data-f]").forEach(c=>c.onclick=()=>{
+  filtro=c.dataset.f;document.querySelectorAll(".chip[data-f]").forEach(x=>x.setAttribute("aria-pressed",x===c));render()});
+$("#showDone").onclick=e=>{verHechas=!verHechas;e.currentTarget.setAttribute("aria-pressed",verHechas);render()};
+
+$("#exportar").onclick=()=>{
+  const blob=new Blob([JSON.stringify(tasks,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="agenda-dek-"+new Date().toISOString().slice(0,10)+".json";
+  document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};
+$("#importarBtn").onclick=()=>$("#importar").click();
+$("#importar").onchange=async e=>{
+  const file=e.target.files[0];e.target.value="";if(!file)return;
+  try{
+    const v=JSON.parse(await file.text());
+    if(!Array.isArray(v)||!v.every(t=>t&&typeof t.texto==="string"&&typeof t.proyecto==="string"))throw 0;
+    tasks=v.map(t=>({id:String(t.id||("t"+Math.random().toString(36).slice(2))),proyecto:t.proyecto,texto:t.texto,quien:WHO[t.quien]?t.quien:"tu",hecho:!!t.hecho,hechoEn:t.hechoEn||null,creado:t.creado||Date.now()}));
+    guardar();render();status("Copia cargada: "+tasks.length+" tareas.");
+  }catch(err){status("Ese archivo no es una copia de la agenda.")}
+};
+
+render();
+</script>
+</body>
+</html>
